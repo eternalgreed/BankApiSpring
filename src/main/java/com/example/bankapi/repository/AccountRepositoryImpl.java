@@ -1,23 +1,37 @@
 package com.example.bankapi.repository;
 
 import com.example.bankapi.entity.Account;
+import com.example.bankapi.exception.NoSuchAccountException;
 import com.example.bankapi.model.MoneyModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class AccountRepositoryImpl {
     @Autowired
     NamedParameterJdbcTemplate jdbcTemplate;
+    private static Logger log = LoggerFactory.getLogger(AccountRepositoryImpl.class);
+
 
     public Account getById(int id) {
         final String sql = "SELECT * FROM ACCOUNTS WHERE ID = :account_id";
         MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("account_id", id);
-        return jdbcTemplate.queryForObject(sql, paramMap, new AccountMapper());
+        Account account = null;
+        try {
+            account = jdbcTemplate.queryForObject(sql, paramMap, new AccountMapper());
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoSuchAccountException("Данного счета не существует!");
+        }
+        return account;
     }
 
     public Account updateById(int id, MoneyModel amount) {
@@ -29,6 +43,9 @@ public class AccountRepositoryImpl {
         KeyHolder holder = new GeneratedKeyHolder();
         jdbcTemplate.update(sqlUpdate, mapParam, holder, new String[]{"ID"});
         Number key = holder.getKey();
+        if (Objects.isNull(key)) {
+            throw new NoSuchAccountException("Данного счета не существует!");
+        }
         MapSqlParameterSource mapAmount = new MapSqlParameterSource().addValue("id", key.intValue());
         return jdbcTemplate.queryForObject(sqlGetIncreasedBalance, mapAmount, new AccountMapper());
     }
