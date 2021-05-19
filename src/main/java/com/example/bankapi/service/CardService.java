@@ -1,16 +1,18 @@
 package com.example.bankapi.service;
 
 import com.example.bankapi.entity.Card;
-import com.example.bankapi.repository.CardRepositoryImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.bankapi.repository.CardRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class CardService {
-    @Autowired
-    CardRepositoryImpl repository;
+    private final CardRepository repository;
+
+    public CardService(CardRepository repository) {
+        this.repository = repository;
+    }
 
     public List<Card> getAccountListOfCards(int accountId) {
         return repository.getAllByAccountId(accountId);

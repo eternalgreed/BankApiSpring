@@ -2,7 +2,6 @@ package com.example.bankapi.controller;
 
 import com.example.bankapi.entity.Card;
 import com.example.bankapi.service.CardService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,8 +9,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/client/account/")
 public class CardController {
-    @Autowired
-    CardService cardService;
+    private final CardService cardService;
+
+    public CardController(CardService cardService) {
+        this.cardService = cardService;
+    }
 
     @GetMapping("/{accountId}/cards")
     public List<Card> getAllCardsByAccount(@PathVariable int accountId) {

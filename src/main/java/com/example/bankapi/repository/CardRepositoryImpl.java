@@ -3,7 +3,6 @@ package com.example.bankapi.repository;
 import com.example.bankapi.entity.Card;
 import com.example.bankapi.exception.NoSuchAccountException;
 import com.example.bankapi.utli.CardNumberGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,9 +14,12 @@ import java.util.List;
 
 
 @Repository
-public class CardRepositoryImpl {
-    @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
+public class CardRepositoryImpl implements CardRepository {
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    public CardRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     public List<Card> getAllByAccountId(int accountId) {

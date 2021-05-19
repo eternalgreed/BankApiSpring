@@ -30,7 +30,8 @@ class CardRepositoryImplTest {
     public void getAllByAccountId() {
         List<Card> cardsExpected = new ArrayList<>(Arrays.asList(
                 new Card(1, "1488322845651234", 1, false),
-                new Card(2, "3228148845671234", 1, false)));
+                new Card(2, "3228148845671234", 1, false)
+        ));
         List<Card> cardsActual = cardRepository.getAllByAccountId(1);
         assertEquals(cardsExpected, cardsActual);
     }

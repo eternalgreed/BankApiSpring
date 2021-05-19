@@ -5,7 +5,6 @@ import com.example.bankapi.exception.NoSuchAccountException;
 import com.example.bankapi.model.MoneyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,10 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class AccountRepositoryImpl {
-    @Autowired
-    NamedParameterJdbcTemplate jdbcTemplate;
+public class AccountRepositoryImpl implements AccountRepository {
+    private final NamedParameterJdbcTemplate jdbcTemplate;
     private static Logger log = LoggerFactory.getLogger(AccountRepositoryImpl.class);
+
+    public AccountRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     public Account getById(int id) {

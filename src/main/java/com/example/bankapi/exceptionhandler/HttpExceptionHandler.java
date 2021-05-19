@@ -14,7 +14,7 @@ public class HttpExceptionHandler {
     public ResponseEntity<ErrorDescription> othersExceptionHandler(NoSuchAccountException e) {
         ErrorDescription errorDescription = new ErrorDescription();
         errorDescription.setError(e.getMessage());
-        return new ResponseEntity<>(errorDescription, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDescription, HttpStatus.NOT_FOUND);
     }
 
     @Data

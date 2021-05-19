@@ -2,14 +2,16 @@ package com.example.bankapi.service;
 
 import com.example.bankapi.entity.Account;
 import com.example.bankapi.model.MoneyModel;
-import com.example.bankapi.repository.AccountRepositoryImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.bankapi.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AccountService {
-    @Autowired
-    AccountRepositoryImpl repository;
+    private final AccountRepository repository;
+
+    public AccountService(AccountRepository repository) {
+        this.repository = repository;
+    }
 
     public Account getBalance(int accountId) {
         return repository.getById(accountId);
