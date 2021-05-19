@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,8 +36,10 @@ class CardRepositoryImplTest {
     }
 
     @Test
-    public void getAllByAccountIdNoSuchAccExc() {
-        assertThrows(NoSuchAccountException.class, () -> cardRepository.getAllByAccountId(6));
+    public void getAllByAccountIdEmptyList() {
+        List<Card> cardsExpected = Collections.emptyList();
+        List<Card> cardsActual = cardRepository.getAllByAccountId(6);
+        assertEquals(cardsExpected, cardsActual);
     }
 
 
