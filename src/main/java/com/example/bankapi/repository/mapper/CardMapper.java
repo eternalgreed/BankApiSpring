@@ -1,4 +1,4 @@
-package com.example.bankapi.repository;
+package com.example.bankapi.repository.mapper;
 
 import com.example.bankapi.entity.Card;
 import org.springframework.jdbc.core.RowMapper;

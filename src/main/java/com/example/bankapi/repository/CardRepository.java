@@ -9,4 +9,6 @@ public interface CardRepository {
 
     Card createByAccountId(int accountId);
 
+    Card updateById(int cardId);
+
 }

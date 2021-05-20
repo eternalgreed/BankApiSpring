@@ -48,7 +48,7 @@ class CardRepositoryImplTest {
     public void createByAccountIdSuccess() {
         Card byAccountId = cardRepository.createByAccountId(1);
         int idActual = byAccountId.getId();
-        assertEquals(3, idActual);
+        assertEquals(4, idActual);
     }
 
     @Test

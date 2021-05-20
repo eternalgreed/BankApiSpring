@@ -1,10 +1,15 @@
 package com.example.bankapi.repository;
 
+import com.example.bankapi.dto.AccountDTO;
+import com.example.bankapi.dto.MoneyDTO;
 import com.example.bankapi.entity.Account;
 import com.example.bankapi.exception.NoSuchAccountException;
-import com.example.bankapi.model.MoneyModel;
+import com.example.bankapi.exception.NoSuchClientException;
+import com.example.bankapi.repository.mapper.AccountMapper;
+import com.example.bankapi.utli.NumberGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -27,7 +32,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     public Account getById(int id) {
         final String sql = "SELECT * FROM ACCOUNTS WHERE ID = :account_id";
         MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("account_id", id);
-        Account account = null;
+        Account account;
         try {
             account = jdbcTemplate.queryForObject(sql, paramMap, new AccountMapper());
         } catch (EmptyResultDataAccessException e) {
@@ -36,7 +41,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         return account;
     }
 
-    public Account updateById(int id, MoneyModel amount) {
+    public Account updateById(int id, MoneyDTO amount) {
         final String sqlUpdate = "UPDATE ACCOUNTS SET BALANCE = BALANCE + :amount where ID = :account_id";
         final String sqlGetIncreasedBalance = "SELECT * FROM ACCOUNTS WHERE ID = :id";
         MapSqlParameterSource mapParam = new MapSqlParameterSource()
@@ -50,5 +55,27 @@ public class AccountRepositoryImpl implements AccountRepository {
         }
         MapSqlParameterSource mapAmount = new MapSqlParameterSource().addValue("id", key.intValue());
         return jdbcTemplate.queryForObject(sqlGetIncreasedBalance, mapAmount, new AccountMapper());
+    }
+
+    @Override
+    public Account create(AccountDTO dto) {
+        String cardNumber = NumberGenerator.generate(20);
+        final String sql = "INSERT INTO ACCOUNTS (number, balance, client_id) VALUES ( :number, :balance, :client_id)";
+        final String sqlGetNewCard = "SELECT * FROM ACCOUNTS WHERE ID = :id";
+        final KeyHolder holder = new GeneratedKeyHolder();
+        MapSqlParameterSource paramMap = new MapSqlParameterSource().
+                addValue("number", cardNumber).
+                addValue("balance", 0.0).
+                addValue("client_id", dto.getClientId());
+        try {
+            jdbcTemplate.update(sql, paramMap, holder, new String[]{"ID"});
+        } catch (DataAccessException e) {
+            throw new NoSuchClientException("Невозможно выпустить карту для несуществующего клиента!");
+        }
+        Number key = holder.getKey();
+
+        MapSqlParameterSource paramMapCard = new MapSqlParameterSource()
+                .addValue("id", key.intValue());
+        return jdbcTemplate.queryForObject(sqlGetNewCard, paramMapCard, new AccountMapper());
     }
 }

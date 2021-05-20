@@ -1,7 +1,8 @@
 package com.example.bankapi.service;
 
+import com.example.bankapi.dto.AccountDTO;
+import com.example.bankapi.dto.MoneyDTO;
 import com.example.bankapi.entity.Account;
-import com.example.bankapi.model.MoneyModel;
 import com.example.bankapi.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,11 @@ public class AccountService {
         return repository.getById(accountId);
     }
 
-    public Account increaseBalance(int accountId, MoneyModel amount) {
+    public Account increaseBalance(int accountId, MoneyDTO amount) {
         return repository.updateById(accountId, amount);
+    }
+
+    public Account createAccount(AccountDTO dto) {
+        return repository.create(dto);
     }
 }

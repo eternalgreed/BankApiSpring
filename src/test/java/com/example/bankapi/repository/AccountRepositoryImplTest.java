@@ -1,9 +1,9 @@
 package com.example.bankapi.repository;
 
 
+import com.example.bankapi.dto.MoneyDTO;
 import com.example.bankapi.entity.Account;
 import com.example.bankapi.exception.NoSuchAccountException;
-import com.example.bankapi.model.MoneyModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class AccountRepositoryImplTest {
     @Test
     public void updateById() {
         Account actualAcc = new Account(1, "14883228111122225555", 5000.0, 1);
-        Account expectedAcc = accountRepository.updateById(actualAcc.getId(), new MoneyModel(2000.0));
+        Account expectedAcc = accountRepository.updateById(actualAcc.getId(), new MoneyDTO(2000.0));
         assertEquals(expectedAcc, actualAcc);
     }
 
@@ -47,6 +47,6 @@ public class AccountRepositoryImplTest {
     public void updateByIdNoSuchAccExc() {
         assertThrows(NoSuchAccountException.class, () ->
                 accountRepository.updateById(5,
-                        new MoneyModel(2000.0)));
+                        new MoneyDTO(2000.0)));
     }
 }

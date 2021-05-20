@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/client/account/")
+@RequestMapping("/api/cards")
 public class CardController {
     private final CardService cardService;
 
@@ -23,5 +23,10 @@ public class CardController {
     @PostMapping("{accountId}/cards")
     public Card createCardByAccount(@PathVariable int accountId) {
         return cardService.createNewCard(accountId);
+    }
+
+    @PutMapping("{cardId}/activate")
+    public Card approveCard(@PathVariable int cardId) {
+        return cardService.approveCard(cardId);
     }
 }

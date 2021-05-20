@@ -22,4 +22,7 @@ public class CardService {
         return repository.createByAccountId(accountId);
     }
 
+    public Card approveCard(int cardId) {
+        return repository.updateById(cardId);
+    }
 }

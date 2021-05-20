@@ -2,7 +2,7 @@ package com.example.bankapi.utli;
 
 import java.util.Random;
 
-public class CardNumberGenerator {
+public class NumberGenerator {
 
     public static String generate(int length) {
         Random random = new Random(System.currentTimeMillis());

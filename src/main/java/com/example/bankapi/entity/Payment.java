@@ -1,6 +1,5 @@
 package com.example.bankapi.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Card {
+public class Payment {
     private int id;
-    private String number;
-    @JsonIgnore
-    private int accountId;
-    private boolean active;
+    private Double amount;
+    private boolean approved;
+    private int fromId;
+    private int toId;
 }
+
