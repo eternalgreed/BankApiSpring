@@ -1,7 +1,7 @@
 package com.example.bankapi.controller;
 
-import com.example.bankapi.dto.AccountDTO;
-import com.example.bankapi.dto.MoneyDTO;
+import com.example.bankapi.dto.input.AccountDTO;
+import com.example.bankapi.dto.input.MoneyDTO;
 import com.example.bankapi.entity.Account;
 import com.example.bankapi.service.AccountService;
 import org.springframework.web.bind.annotation.*;

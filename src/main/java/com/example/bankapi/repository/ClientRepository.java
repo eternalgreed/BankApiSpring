@@ -1,7 +1,7 @@
 package com.example.bankapi.repository;
 
-import com.example.bankapi.dto.ClientDTO;
-import com.example.bankapi.dto.CounterPartyDTO;
+import com.example.bankapi.dto.input.ClientDTO;
+import com.example.bankapi.dto.input.CounterPartyDTO;
 import com.example.bankapi.entity.Client;
 
 import java.util.List;

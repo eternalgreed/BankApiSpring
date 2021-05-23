@@ -1,4 +1,4 @@
-package com.example.bankapi.dto;
+package com.example.bankapi.dto.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountDTO {
-    private int clientId;
+public class CounterPartyDTO {
+    private int partyID;
+    private int counterPartyId;
 }

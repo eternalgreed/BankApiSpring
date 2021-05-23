@@ -1,12 +1,12 @@
 package com.example.bankapi.repository;
 
-import com.example.bankapi.dto.PaymentDTO;
+import com.example.bankapi.dto.input.PaymentDTO;
 import com.example.bankapi.entity.Payment;
 
 public interface PaymentRepository {
-    void updateById(int paymentId);
+    Payment updateById(int paymentId);
 
-    void create(PaymentDTO dto);
+    Payment create(PaymentDTO dto);
 
     Payment findById(int paymentId);
 }

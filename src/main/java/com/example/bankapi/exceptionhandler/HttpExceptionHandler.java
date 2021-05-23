@@ -39,15 +39,8 @@ public class HttpExceptionHandler {
         return new ResponseEntity<>(errorDescription, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoSuchPaymentException.class)
-    public ResponseEntity<ErrorDescription> noSuchCardExceptionHandler(NoSuchPaymentException e) {
-        ErrorDescription errorDescription = new ErrorDescription();
-        errorDescription.setError(e.getMessage());
-        return new ResponseEntity<>(errorDescription, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(SenderBalanceLowException.class)
-    public ResponseEntity<ErrorDescription> noSuchCardExceptionHandler(SenderBalanceLowException e) {
+    @ExceptionHandler(PaymentException.class)
+    public ResponseEntity<ErrorDescription> paymentExceptionHandler(PaymentException e) {
         ErrorDescription errorDescription = new ErrorDescription();
         errorDescription.setError(e.getMessage());
         return new ResponseEntity<>(errorDescription, HttpStatus.BAD_REQUEST);

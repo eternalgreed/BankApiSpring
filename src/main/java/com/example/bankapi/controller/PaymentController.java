@@ -1,6 +1,7 @@
 package com.example.bankapi.controller;
 
-import com.example.bankapi.dto.PaymentDTO;
+import com.example.bankapi.dto.input.PaymentDTO;
+import com.example.bankapi.entity.Payment;
 import com.example.bankapi.service.PaymentService;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,21 +15,14 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    /* @PostMapping
-     public PaymentDTO createPayment(@RequestBody PaymentDTO dto){
-
-     }
-
- */
     @PostMapping
-    public void createPayment(@RequestBody PaymentDTO dto) {
-        paymentService.createPayment(dto);
+    public Payment createPayment(@RequestBody PaymentDTO dto) {
+        return paymentService.createPayment(dto);
     }
 
     @PutMapping("{paymentId}/approve")
-    public void approvePayment(@PathVariable int paymentId) {
-        paymentService.approvePayment(paymentId);
+    public Payment approvePayment(@PathVariable int paymentId) {
+        return paymentService.approvePayment(paymentId);
     }
-
 
 }

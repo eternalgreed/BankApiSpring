@@ -1,4 +1,4 @@
-package com.example.bankapi.dto;
+package com.example.bankapi.dto.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,7 @@
 package com.example.bankapi.service;
 
-import com.example.bankapi.dto.PaymentDTO;
+import com.example.bankapi.dto.input.PaymentDTO;
+import com.example.bankapi.entity.Payment;
 import com.example.bankapi.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +14,11 @@ public class PaymentService {
         this.repository = repository;
     }
 
-    public void approvePayment(int paymentId) {
-        repository.updateById(paymentId);
+    public Payment approvePayment(int paymentId) {
+        return repository.updateById(paymentId);
     }
 
-    public void createPayment(PaymentDTO dto) {
-        repository.create(dto);
+    public Payment createPayment(PaymentDTO dto) {
+        return repository.create(dto);
     }
 }
