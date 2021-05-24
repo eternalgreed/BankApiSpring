@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class CardRepositoryImplTest {
     @Autowired
-    CardRepositoryImpl cardRepository;
+    CardRepository cardRepository;
 
     @Test
     void getAllByAccountId() {
