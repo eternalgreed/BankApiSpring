@@ -24,10 +24,8 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     private static final String SELECT_ACCOUNT_BY_ID =
             "SELECT * FROM ACCOUNTS WHERE ID = :id";
-
     private static final String UPDATE_BALANCE_BY_ID =
             "UPDATE ACCOUNTS SET BALANCE = BALANCE + :amount where ID = :account_id";
-
     private static final String INSERT_NEW_ACCOUNT =
             "INSERT INTO ACCOUNTS (number, balance, client_id) VALUES ( :number, :balance, :client_id)";
 
@@ -46,6 +44,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         try {
             account = jdbcTemplate.queryForObject(SELECT_ACCOUNT_BY_ID, paramMap, new AccountMapper());
         } catch (EmptyResultDataAccessException e) {
+            log.info(e.getMessage());
             throw new NoSuchAccountException("Данного счета не существует!");
         }
         return account;
@@ -76,6 +75,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         try {
             jdbcTemplate.update(INSERT_NEW_ACCOUNT, paramMap, holder, new String[]{"ID"});
         } catch (DataAccessException e) {
+            log.info(e.getMessage());
             throw new NoSuchClientException("Невозможно выпустить карту для несуществующего клиента!");
         }
         Number key = holder.getKey();

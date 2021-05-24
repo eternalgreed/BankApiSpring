@@ -30,6 +30,4 @@ public class AccountController {
     public Account createAccount(@RequestBody AccountDTO dto) {
         return accountService.createAccount(dto);
     }
-
-
 }

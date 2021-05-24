@@ -46,7 +46,6 @@ public class HttpExceptionHandler {
         return new ResponseEntity<>(errorDescription, HttpStatus.BAD_REQUEST);
     }
 
-
     @Data
     @NoArgsConstructor
     private static class ErrorDescription {

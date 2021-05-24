@@ -5,6 +5,8 @@ import com.example.bankapi.entity.Payment;
 import com.example.bankapi.exception.NoSuchAccountException;
 import com.example.bankapi.exception.PaymentException;
 import com.example.bankapi.repository.mapper.PaymentMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -29,6 +31,9 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     private static final String SELECT_PAYMENT_BY_ID = "SELECT * FROM PAYMENTS WHERE ID = :id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    private static Logger log = LoggerFactory.getLogger(ClientRepositoryImpl.class);
+
 
     public PaymentRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -68,6 +73,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         try {
             jdbcTemplate.update(INSERT_NEW_PAYMENT, mapParam, holder, new String[]{"ID"});
         } catch (DataAccessException e) {
+            log.info(e.getMessage());
             throw new NoSuchAccountException("Невозможно выполнить платеж для несуществующих счетов!");
         }
         return findById(holder.getKey().intValue());
@@ -80,6 +86,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         try {
             return jdbcTemplate.queryForObject(SELECT_PAYMENT_BY_ID, mapParam, new PaymentMapper());
         } catch (EmptyResultDataAccessException e) {
+            log.info(e.getMessage());
             throw new PaymentException("Нет такого платежа!");
         }
     }

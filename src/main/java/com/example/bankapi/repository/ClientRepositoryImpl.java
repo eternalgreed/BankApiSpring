@@ -36,6 +36,7 @@ public class ClientRepositoryImpl implements ClientRepository {
     private static final String SELECT_CLIENT_BY_ID = "SELECT * FROM CLIENTS WHERE ID = :id";
 
     private static Logger log = LoggerFactory.getLogger(ClientRepositoryImpl.class);
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public ClientRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -58,8 +59,10 @@ public class ClientRepositoryImpl implements ClientRepository {
         try {
             jdbcTemplate.update(INSERT_NEW_COUNTERPARTY, paramMap, holder, new String[]{"id"});
         } catch (DuplicateKeyException e) {
+            log.info(e.getMessage());
             throw new DuplicateCounterPartyException("Данный контрагент уже создан для этого клинта!");
         } catch (DataAccessException e) {
+            log.info(e.getMessage());
             throw new NoSuchClientException("Невозможно создать контрагента для несуществующего клиента");
         }
         Number key = holder.getKey();
