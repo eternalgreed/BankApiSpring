@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AccountRepositoryImplTest {
 
     @Autowired
-    AccountRepositoryImpl accountRepository;
+    AccountRepository accountRepository;
 
     @Test
     void getById() {
