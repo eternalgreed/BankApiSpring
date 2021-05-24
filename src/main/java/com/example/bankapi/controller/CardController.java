@@ -20,7 +20,7 @@ public class CardController {
         return cardService.getAccountListOfCards(accountId);
     }
 
-    @PostMapping("{accountId}/cards")
+    @PostMapping("{accountId}/create")
     public Card createCardByAccount(@PathVariable int accountId) {
         return cardService.createNewCard(accountId);
     }

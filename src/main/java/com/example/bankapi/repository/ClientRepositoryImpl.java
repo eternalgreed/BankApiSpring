@@ -20,7 +20,22 @@ import java.util.List;
 
 @Repository
 public class ClientRepositoryImpl implements ClientRepository {
-    private static Logger log = LoggerFactory.getLogger(AccountRepositoryImpl.class);
+
+    private static final String SELECT_ALL_COUNTERPARTIES =
+            "SELECT * FROM CLIENTS JOIN COUNTERPARTIES ON CLIENTS.ID =" +
+                    " COUNTERPARTIES.COUNTERPARTY_ID WHERE PARTY_ID = :id";
+
+    private static final String INSERT_NEW_COUNTERPARTY =
+            "INSERT INTO COUNTERPARTIES  (PARTY_ID, COUNTERPARTY_ID) VALUES ( :party_id, :counterparty_id)";
+
+    private static final String SELECT_CLIENT_BY_COUNTERPARTY_ID =
+            "SELECT * FROM CLIENTS WHERE ID = (SELECT COUNTERPARTY_ID FROM COUNTERPARTIES WHERE ID =:id)";
+
+    private static final String INSERT_NEW_CLIENT = "INSERT INTO CLIENTS (NAME) VALUES (:name)";
+
+    private static final String SELECT_CLIENT_BY_ID = "SELECT * FROM CLIENTS WHERE ID = :id";
+
+    private static Logger log = LoggerFactory.getLogger(ClientRepositoryImpl.class);
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public ClientRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -30,21 +45,18 @@ public class ClientRepositoryImpl implements ClientRepository {
 
     @Override
     public List<Client> getAllByClientId(int clientId) {
-        final String sql = "SELECT * FROM CLIENTS JOIN COUNTERPARTIES ON CLIENTS.ID = COUNTERPARTIES.COUNTERPARTY_ID WHERE PARTY_ID = :id";
         MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("id", clientId);
-        return jdbcTemplate.query(sql, paramMap, new ClientMapper());
+        return jdbcTemplate.query(SELECT_ALL_COUNTERPARTIES, paramMap, new ClientMapper());
     }
 
     @Override
     public Client create(CounterPartyDTO dto) {
-        final String sql = "INSERT INTO COUNTERPARTIES  (PARTY_ID, COUNTERPARTY_ID) VALUES ( :party_id, :counterparty_id)";
-        final String sqlGetNewCounterParty = "SELECT * FROM CLIENTS WHERE ID = (SELECT COUNTERPARTY_ID FROM COUNTERPARTIES WHERE ID =:id)";
         final KeyHolder holder = new GeneratedKeyHolder();
         MapSqlParameterSource paramMap = new MapSqlParameterSource().
                 addValue("party_id", dto.getPartyID()).
                 addValue("counterparty_id", dto.getCounterPartyId());
         try {
-            jdbcTemplate.update(sql, paramMap, holder, new String[]{"id"});
+            jdbcTemplate.update(INSERT_NEW_COUNTERPARTY, paramMap, holder, new String[]{"id"});
         } catch (DuplicateKeyException e) {
             throw new DuplicateCounterPartyException("Данный контрагент уже создан для этого клинта!");
         } catch (DataAccessException e) {
@@ -54,22 +66,20 @@ public class ClientRepositoryImpl implements ClientRepository {
 
         MapSqlParameterSource paramMapCard = new MapSqlParameterSource()
                 .addValue("id", key.intValue());
-        return jdbcTemplate.queryForObject(sqlGetNewCounterParty, paramMapCard, new ClientMapper());
+        return jdbcTemplate.queryForObject(SELECT_CLIENT_BY_COUNTERPARTY_ID, paramMapCard, new ClientMapper());
     }
 
     @Override
     public Client create(ClientDTO clientDTO) {
-        final String sql = "INSERT INTO CLIENTS (NAME) VALUES (:name)";
-        final String sqlGetNewCard = "SELECT * FROM CLIENTS WHERE ID = :id";
         final KeyHolder holder = new GeneratedKeyHolder();
         MapSqlParameterSource paramMap = new MapSqlParameterSource().
                 addValue("name", clientDTO.getName());
-        jdbcTemplate.update(sql, paramMap, holder, new String[]{"id"});
+        jdbcTemplate.update(INSERT_NEW_CLIENT, paramMap, holder, new String[]{"id"});
 
         Number key = holder.getKey();
 
         MapSqlParameterSource paramMapCard = new MapSqlParameterSource()
                 .addValue("id", key.intValue());
-        return jdbcTemplate.queryForObject(sqlGetNewCard, paramMapCard, new ClientMapper());
+        return jdbcTemplate.queryForObject(SELECT_CLIENT_BY_ID, paramMapCard, new ClientMapper());
     }
 }

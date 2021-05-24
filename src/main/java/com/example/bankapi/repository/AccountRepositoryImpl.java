@@ -21,7 +21,18 @@ import java.util.Objects;
 
 @Service
 public class AccountRepositoryImpl implements AccountRepository {
+
+    private static final String SELECT_ACCOUNT_BY_ID =
+            "SELECT * FROM ACCOUNTS WHERE ID = :id";
+
+    private static final String UPDATE_BALANCE_BY_ID =
+            "UPDATE ACCOUNTS SET BALANCE = BALANCE + :amount where ID = :account_id";
+
+    private static final String INSERT_NEW_ACCOUNT =
+            "INSERT INTO ACCOUNTS (number, balance, client_id) VALUES ( :number, :balance, :client_id)";
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
+
     private static Logger log = LoggerFactory.getLogger(AccountRepositoryImpl.class);
 
     public AccountRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -30,11 +41,10 @@ public class AccountRepositoryImpl implements AccountRepository {
 
 
     public Account getById(int id) {
-        final String sql = "SELECT * FROM ACCOUNTS WHERE ID = :account_id";
-        MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("account_id", id);
+        MapSqlParameterSource paramMap = new MapSqlParameterSource().addValue("id", id);
         Account account;
         try {
-            account = jdbcTemplate.queryForObject(sql, paramMap, new AccountMapper());
+            account = jdbcTemplate.queryForObject(SELECT_ACCOUNT_BY_ID, paramMap, new AccountMapper());
         } catch (EmptyResultDataAccessException e) {
             throw new NoSuchAccountException("Данного счета не существует!");
         }
@@ -42,33 +52,29 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     public Account updateById(int id, MoneyDTO amount) {
-        final String sqlUpdate = "UPDATE ACCOUNTS SET BALANCE = BALANCE + :amount where ID = :account_id";
-        final String sqlGetIncreasedBalance = "SELECT * FROM ACCOUNTS WHERE ID = :id";
         MapSqlParameterSource mapParam = new MapSqlParameterSource()
                 .addValue("amount", amount.getAmount())
                 .addValue("account_id", id);
         KeyHolder holder = new GeneratedKeyHolder();
-        jdbcTemplate.update(sqlUpdate, mapParam, holder, new String[]{"ID"});
+        jdbcTemplate.update(UPDATE_BALANCE_BY_ID, mapParam, holder, new String[]{"ID"});
         Number key = holder.getKey();
         if (Objects.isNull(key)) {
             throw new NoSuchAccountException("Данного счета не существует!");
         }
         MapSqlParameterSource mapAmount = new MapSqlParameterSource().addValue("id", key.intValue());
-        return jdbcTemplate.queryForObject(sqlGetIncreasedBalance, mapAmount, new AccountMapper());
+        return jdbcTemplate.queryForObject(SELECT_ACCOUNT_BY_ID, mapAmount, new AccountMapper());
     }
 
     @Override
     public Account create(AccountDTO dto) {
         String cardNumber = NumberGenerator.generate(20);
-        final String sql = "INSERT INTO ACCOUNTS (number, balance, client_id) VALUES ( :number, :balance, :client_id)";
-        final String sqlGetNewCard = "SELECT * FROM ACCOUNTS WHERE ID = :id";
         final KeyHolder holder = new GeneratedKeyHolder();
         MapSqlParameterSource paramMap = new MapSqlParameterSource().
                 addValue("number", cardNumber).
                 addValue("balance", 0.0).
                 addValue("client_id", dto.getClientId());
         try {
-            jdbcTemplate.update(sql, paramMap, holder, new String[]{"ID"});
+            jdbcTemplate.update(INSERT_NEW_ACCOUNT, paramMap, holder, new String[]{"ID"});
         } catch (DataAccessException e) {
             throw new NoSuchClientException("Невозможно выпустить карту для несуществующего клиента!");
         }
@@ -76,6 +82,6 @@ public class AccountRepositoryImpl implements AccountRepository {
 
         MapSqlParameterSource paramMapCard = new MapSqlParameterSource()
                 .addValue("id", key.intValue());
-        return jdbcTemplate.queryForObject(sqlGetNewCard, paramMapCard, new AccountMapper());
+        return jdbcTemplate.queryForObject(SELECT_ACCOUNT_BY_ID, paramMapCard, new AccountMapper());
     }
 }
